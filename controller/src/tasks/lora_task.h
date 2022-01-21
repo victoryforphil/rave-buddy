@@ -7,7 +7,6 @@
 #endif
 
 void lora_init();
-void task_lora_init(void *pvParameters);
-void task_lora_tick();
-
+void task_lora_rec_init(void *pvParameters);
+void task_lora_send_init(void *pvParameters);
 #endif

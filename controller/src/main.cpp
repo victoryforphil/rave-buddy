@@ -1,6 +1,7 @@
 #include "tasks/ble_task.h"
 #include "tasks/serial_task.h"
 #include "tasks/lora_task.h"
+#include "tasks/state.h"
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -22,18 +23,31 @@ struct SystemState{
     BuddyState* states[8];
 } ss;
 #define BAND    433E6
+
+const int DEVICE_ID = 2;
 void task_testing(void *pvParameters ){
     for(;;){
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
+        Heltec.display->clear();
+        Heltec.display->drawString(0, 0, String("RaveBuddy"));
+        Heltec.display->drawString(0, 30, String(DEVICE_ID));
+        Heltec.display->display();
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
+
+
 void setup()
 {
     Heltec.begin(true /*DisplayEnable Enable*/, true /*Heltec.LoRa Disable*/, true /*Serial Enable*/, true /*PABOOST Enable*/, BAND /*long BAND*/);
     Serial.begin(9600);
-
+    Serial.setTimeout(3000);
+    Heltec.display->init();
+    Heltec.display->flipScreenVertically();
+    Heltec.display->setFont(ArialMT_Plain_24);
+    
     lora_init();
-
+    state_init(DEVICE_ID);
+    
     xTaskCreatePinnedToCore(
     task_serial_init
     ,  "TaskSerial"   // A name just for humans
