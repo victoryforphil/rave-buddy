@@ -5,6 +5,6 @@
 void serial_print(const char *string);
 
 void task_serial_init(void *pvParameters);
-void task_serial_tick();
+void task_serial_tick(void *pvParameter);
 
 #endif

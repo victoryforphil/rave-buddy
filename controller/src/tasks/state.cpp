@@ -10,12 +10,22 @@ void state_init(int myId){
     sysState.myState.mine = true;
     sysState.myState.state = "init";
     sysState.myState.timestamp = millis();
+    sysState.myState.gps_fix = false;
+    sysState.myState.gps_lat = 0;
+    sysState.myState.gps_lon = 0;
+    sysState.myState.gps_sats = 0;
+    
     for(int i = 0; i < 8; i++){
         sysState.states[i] = {0};
         sysState.states[i].id = i;
         sysState.states[i].mine = false;
         sysState.states[i].state = "init";
         sysState.states[i].timestamp = millis();
+        sysState.states[i].gps_fix = false;
+        sysState.states[i].gps_lat = 0;
+        sysState.states[i].gps_lon = 0;
+        sysState.states[i].gps_sats = 0;
+        
     }
     
 }

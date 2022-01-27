@@ -8,7 +8,11 @@ typedef struct RaveDeviceState_t{
     bool mine;
     int id;
     String state;
-    long timestamp;
+    unsigned long timestamp;
+    long gps_lat;
+    long gps_lon;
+    bool gps_fix;
+    char gps_sats;
 } RaveDeviceState;
 
 typedef  struct RaveSysState_t{

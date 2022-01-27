@@ -19,7 +19,7 @@ void task_serial_init(void *pvParameters)
     serial_print("Task/Serial: Init\n");
     for (;;)
     {
-        task_serial_tick();
+        task_serial_tick(nullptr);
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }

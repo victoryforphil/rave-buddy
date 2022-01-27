@@ -13,8 +13,16 @@ void lora_recieve(int packetSize)
         
         unsigned int id= 0;
         LoRa.readBytes((char*)&id, 1);
+
         unsigned long time = 0;
         LoRa.readBytes((char*)&time, sizeof(time));
+
+        long gps_lat = 0;
+        LoRa.readBytes((char*)&gps_lat, sizeof(gps_lat));
+
+        long gps_lon = 0;
+        LoRa.readBytes((char*)&gps_lon, sizeof(gps_lon));
+
         String state = String("");
         // read packet
        
@@ -60,9 +68,21 @@ void task_lora_send_init(void *pvParameters)
         LoRa.beginPacket();
         
         LoRa.setTxPower(14,RF_PACONFIG_PASELECT_PABOOST);
+
         LoRa.write(state->id); // Device ID
+
+
+
+
         unsigned long time = millis();
         LoRa.write((const uint8_t*)&time, sizeof(long));// Time Stamp
+
+        long gps_lat = state->gps_lat;
+        LoRa.write((const uint8_t*)&gps_lat, sizeof(long));// Time Stamp
+
+        long gps_lon = state->gps_lon;
+        LoRa.write((const uint8_t*)&gps_lon, sizeof(long));// Time Stamp
+
         LoRa.print(state->state.c_str());
         LoRa.endPacket();
         vTaskDelay(2000 / portTICK_PERIOD_MS);
