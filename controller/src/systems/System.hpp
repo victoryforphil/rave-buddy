@@ -7,8 +7,8 @@ namespace RaveBuddy
     private:
         /* data */
     public:
-        virtual bool requestUpdate(State &t_state);
-        virtual bool responseUpdate(State &t_state);
+        virtual bool requestUpdate(State &t_state) = 0;
+        virtual bool responseUpdate(State &t_state)= 0;
 
     };
 

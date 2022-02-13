@@ -1,22 +1,63 @@
 #pragma once
+/*
+    RaveBuddy::LogController
+    ----------------
+    Static class that allows logging from all subsystems.
+    It stores a list of classes that implement RaveBuddy::Logger.
 
-#include "Logger.hpp"
+    Then upon any message, will distrubute said message to all logger classes
+
+    It will also store a list of all messages recived so far so
+    any new loggers may display the entire log tree
+*/
+
+
+
+// --- SYSTEM INCLUDES --- //
 #include <vector>
 #include <string>
+#include <memory>
+// --- LOCAL INCLUDES --- //
+
+// --- PREPROC DEFINES --- //
+// How many messages to store before remoiving
+#define LOGGER_MAX_HISTORY 256
+
 namespace RaveBuddy
 {
+    //TODO: Move to own header.
+    class Logger
+    {
+    public:
+
+        // --- CLASS FUNCTIONS --- //
+        // Send a message to the logger (overriden)
+        virtual void onMessage(std::shared_ptr<std::string> t_msg) = 0 ;
+    };
+//--------------------------------
     class LogController
     {
     private:
-        
-        std::vector<std::string> m_history; // Store all log messages (within limit)
-        std::vector<Logger*> m_loggers;     // All Registered logging components
-    public:
-        LogController(/* args */);
-        static void registerLogger(Logger *t_logger);
-        static void logMessage(std::string t_msg);
+        // --- PRIVATE DATA --- //
+        // Store all log messages (within limit)
+        static std::vector<std::shared_ptr<std::string>> m_history;
+        // All Registered logging components
+        static std::vector<Logger *> m_loggers;
 
-        ~LogController();
+    public:
+
+        // --- OPERATORS --- //
+        
+        LogController();
+
+        // --- CLASS FUNCTIOSN --- //
+        // Called on the creation of any logger, this is called
+        // to store a reference to said logger in our list of known loggers.
+        // This will also send all historic messages to the new logger (to catch up.)
+        static void registerLogger(Logger *t_logger);
+
+        // Log a message to all the registered loggers (and store it in a queue)
+        static void logMessage(std::string t_msg);
     };
-    
+
 } // namespace RaveBuddy

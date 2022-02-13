@@ -21,6 +21,6 @@ namespace RaveBuddy
         State(/* args */);
         ~State();
 
-    }
+    };
     
 } // namespace RaveBuddy

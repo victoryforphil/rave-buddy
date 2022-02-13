@@ -11,7 +11,7 @@ void LoRaSystem::initSendTask(void* t_this){
     
 }
 
-void LoRaSystem::initSendTask(void* t_this){
+void LoRaSystem::initRecvTask(void* t_this){
 
 }
 
