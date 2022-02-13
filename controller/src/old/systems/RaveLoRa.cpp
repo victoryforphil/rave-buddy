@@ -36,8 +36,6 @@ void RaveLoRa::task_tick_recv()
         return;
     }
 
-    
-   
 
     if(LoRa.parsePacket() > 0){
         

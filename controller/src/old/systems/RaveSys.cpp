@@ -11,7 +11,7 @@ RaveSys::RaveSys(const uint8_t t_id) :  m_id(t_id)
     }
     systems.serial.reset(new RaveSerial( 9600));
     vTaskDelay(1000 / portTICK_PERIOD_MS);
-        systems.lora.reset(new RaveLoRa(m_id));
+    systems.lora.reset(new RaveLoRa(m_id));
     systems.gps.reset(new RaveGPS( 3,4,9600));
 
 
