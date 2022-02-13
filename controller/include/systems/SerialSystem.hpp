@@ -62,6 +62,7 @@ namespace RaveBuddy
         void onMessage(std::shared_ptr<std::string> t_msg);
 
         // --- CLASS FUNCTIONS --- //
+
         // Send a string message over UART (this is queued for send, not directly)
         void send(std::shared_ptr<std::string> t_msg);
     };

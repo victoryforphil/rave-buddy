@@ -39,6 +39,7 @@ namespace RaveBuddy
     {
     private:
         // --- PRIVATE DATA --- //
+        
         // Store all log messages (within limit)
         static std::vector<std::shared_ptr<std::string>> m_history;
         // All Registered logging components
@@ -51,6 +52,7 @@ namespace RaveBuddy
         LogController();
 
         // --- CLASS FUNCTIOSN --- //
+
         // Called on the creation of any logger, this is called
         // to store a reference to said logger in our list of known loggers.
         // This will also send all historic messages to the new logger (to catch up.)

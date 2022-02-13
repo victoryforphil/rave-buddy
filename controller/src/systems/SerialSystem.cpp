@@ -1,4 +1,4 @@
-#include "SerialSystem.hpp"
+#include "systems/SerialSystem.hpp"
 
 using namespace RaveBuddy;
 
@@ -7,7 +7,7 @@ SerialSystem::SerialSystem(uint32_t t_baud) : m_baud(t_baud)
     LogController::logMessage("System/Serial: Starting serial with buad");
     Serial.begin(m_baud);
     Serial.println();
-     LogController::registerLogger(this);
+    LogController::registerLogger(this);
     xTaskCreate(this->initTask, "System/Serial/Task", 4096, this, 5, NULL);
    
 }
