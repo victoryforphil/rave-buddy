@@ -6,9 +6,9 @@ SerialSystem::SerialSystem(uint32_t t_baud) : m_baud(t_baud)
 {
     LogController::logMessage("System/Serial: Starting serial with buad");
     Serial.begin(m_baud);
-    Serial.println();
+    Serial.println("INIT-");
     LogController::registerLogger(this);
-    xTaskCreate(this->initTask, "System/Serial/Task", 4096, this, 5, NULL);
+    xTaskCreatePinnedToCore(this->initTask, "System/Serial/Task", 1024 * 4, this, 10, NULL, 1);
    
 }
 
@@ -29,7 +29,7 @@ void SerialSystem::tickTask()
     
     std::shared_ptr<std::string> msg; 
     // If we can recieve a queue item, print said item;
-    while(xQueueReceive(m_messageQueue, &msg, 10/ portTICK_PERIOD_MS) == pdTRUE)
+    while(xQueueReceive(m_messageQueue, &msg, 50/ portTICK_PERIOD_MS) == pdTRUE)
     {   
 
         Serial.println(msg->c_str());
@@ -40,10 +40,9 @@ void SerialSystem::tickTask()
 }
 
 // Called by log controller
-void SerialSystem::onMessage(std::shared_ptr<std::string> t_msg){
-
-    send(t_msg);
-   
+void SerialSystem::onMessage(std::shared_ptr<std::string> t_msg)
+{
+    send(t_msg); 
 }
 
 void SerialSystem::send(std::shared_ptr<std::string> t_msg)
@@ -62,5 +61,5 @@ SerialSystem::~SerialSystem()
     xQueueReset(m_messageQueue);
 
     // End the serial comms.
-    Serial.end();
+    //Serial.end();
 }

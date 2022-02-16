@@ -46,9 +46,9 @@
   },
   "C_Cpp_Runner.cCompilerPath": "C:/Users/Victo/.platformio/packages/toolchain-xtensa32/bin/xtensa-esp32-elf-gcc.exe",
   "C_Cpp_Runner.cppCompilerPath": "C:/msys64/mingw64/bin/g++.exe",
-  "C_Cpp_Runner.debuggerPath": "gdb",
+  "C_Cpp_Runner.debuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
   "C_Cpp_Runner.cStandard": "c99",
-  "C_Cpp_Runner.cppStandard": "c++11",
+  "C_Cpp_Runner.cppStandard": "c++17",
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.warnings": [
     "-Wall",

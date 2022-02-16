@@ -15,6 +15,8 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <heltec.h>
+#include <string>
+#include <unordered_map>
 
 // --- LOCAL INCLUDES --- //
 
@@ -23,11 +25,11 @@
 #include "logging/LogController.hpp"
 
 // --- PREPROC DEFINES --- //
-#define SYSTEM_LORA_RECV_QUEUE_SIZE 8
+#define SYSTEM_LORA_RECV_QUEUE_SIZE 4
 #define SYSTEM_LORA_SEND_QUEUE_SIZE 4
 #define SYSTEM_LORA_STACK_SIZE 4096
-#define SYSTEM_LORA_RECV_DELAY 25
-#define SYSTEM_LORA_SEND_DELAY 100
+#define SYSTEM_LORA_RECV_DELAY 100
+#define SYSTEM_LORA_SEND_DELAY 250
 
 namespace RaveBuddy
 {   
@@ -57,12 +59,15 @@ namespace RaveBuddy
         // --- PRIVATE DATA --- //
 
         // RTOS queue to store packets to send on next tick
-        const xQueueHandle m_sendQueue = xQueueCreate(SYSTEM_LORA_SEND_QUEUE_SIZE, sizeof(LoRaPacket));
+        xQueueHandle m_sendQueue;
         // RTOS queue to store recieved packets that should be proccessed on state request
-        const xQueueHandle m_recvQueue = xQueueCreate(SYSTEM_LORA_RECV_QUEUE_SIZE, sizeof(LoRaPacket));
+        xQueueHandle m_recvQueue = xQueueCreate(SYSTEM_LORA_RECV_QUEUE_SIZE, sizeof(struct LoRaPacket));
 
         // Current system ID 
         uint8_t m_sysId;
+
+        // Buffer object when reading packets
+        LoRaPacket m_sendBuffer;
         
         //Mutex to control access to LoRa
         const SemaphoreHandle_t m_loraMutex = xSemaphoreCreateMutex();
@@ -89,11 +94,13 @@ namespace RaveBuddy
         ~LoRaSystem();
 
         // --- SYSTEM OVERRIDES --- //
-        
+
+        // Empty single request
+        virtual bool requestUpdate(State &t_state){return true;};
         // Request state updates. Will parse all recieved packets and update the state
-        bool requestUpdate(State &t_state);
+        virtual bool requestUpdateAll(std::unordered_map<uint8_t, State> &t_state);
         // Send current state out across the LoRa Network
-        bool responseUpdate(State &t_state);
+        virtual bool responseUpdate(State &t_state);
 
         
     };

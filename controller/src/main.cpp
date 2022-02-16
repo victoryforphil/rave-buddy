@@ -12,6 +12,7 @@
 // --- Local Includes --- //
 #include "systems/SerialSystem.hpp"
 #include "logging/LogController.hpp"
+#include "Unit.hpp"
 
 // --- PREPROC DEFS --- //
 #if CONFIG_FREERTOS_UNICORE
@@ -28,10 +29,10 @@ void setup()
     
     // * TEST CODE * //
     RaveBuddy::LogController::logMessage("Main: Starting...");
+    //RaveBuddy::SerialSystem serial(9600);
+    RaveBuddy::Unit unit(7);
+    for(;;){
 
-    RaveBuddy::SerialSystem serial(9600);
-    for (;;)
-    {
     }
 
 }

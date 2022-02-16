@@ -1,4 +1,4 @@
-#include "LogController.hpp"
+#include "logging/LogController.hpp"
 
 using namespace RaveBuddy;
 
@@ -23,13 +23,13 @@ void LogController::registerLogger(Logger *t_logger){
     }
 }
 
-void LogController::logMessage(std::string t_msg){
-
+void LogController::logMessage(std::string t_msg)
+{
     auto strPtr = std::make_shared<std::string>(t_msg);
     m_history.push_back(strPtr);
     //Send message to all loggers.
     for(auto logger: m_loggers){
-        logger->onMessage(strPtr);
+       logger->onMessage(strPtr);
     }
 
     // Check if the current history is larger then the max, if so clear it 
