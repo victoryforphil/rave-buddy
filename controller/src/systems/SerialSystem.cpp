@@ -8,7 +8,7 @@ SerialSystem::SerialSystem(uint32_t t_baud) : m_baud(t_baud)
     Serial.begin(m_baud);
     Serial.println("INIT-");
     LogController::registerLogger(this);
-    xTaskCreatePinnedToCore(this->initTask, "System/Serial/Task", 1024 * 4, this, 10, NULL, 1);
+    xTaskCreatePinnedToCore(this->initTask, "System/Serial/Task", 1024 * 5, this, 10, NULL, 1);
    
 }
 

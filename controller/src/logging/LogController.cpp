@@ -23,6 +23,7 @@ void LogController::registerLogger(Logger *t_logger){
     }
 }
 
+
 void LogController::logMessage(std::string t_msg)
 {
     auto strPtr = std::make_shared<std::string>(t_msg);
@@ -35,7 +36,8 @@ void LogController::logMessage(std::string t_msg)
     // Check if the current history is larger then the max, if so clear it 
     // TODO: Make this shuffle the array instead of clearing it.
     if(m_history.size() >=  LOGGER_MAX_HISTORY){
-        m_history.clear();
+        LogController::logMessage("LogController: Clearing first half of logs");
+        std::vector<std::shared_ptr<std::string>>(m_history.begin()+LOGGER_MAX_HISTORY/2, m_history.end()).swap(m_history);
     }
 
      // Save message in history;

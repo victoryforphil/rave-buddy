@@ -25,11 +25,11 @@
 #include "logging/LogController.hpp"
 
 // --- PREPROC DEFINES --- //
-#define SYSTEM_LORA_RECV_QUEUE_SIZE 4
-#define SYSTEM_LORA_SEND_QUEUE_SIZE 4
+#define SYSTEM_LORA_RECV_QUEUE_SIZE 16
+#define SYSTEM_LORA_SEND_QUEUE_SIZE 16
 #define SYSTEM_LORA_STACK_SIZE 4096
-#define SYSTEM_LORA_RECV_DELAY 100
-#define SYSTEM_LORA_SEND_DELAY 250
+#define SYSTEM_LORA_RECV_DELAY 25
+#define SYSTEM_LORA_SEND_DELAY 200
 
 namespace RaveBuddy
 {   
@@ -47,7 +47,7 @@ namespace RaveBuddy
         int64_t gps_lat; // Shifted by E7
         int64_t gps_lon; // Shifted by E7
         uint8_t status_len;
-        std::string status;     
+        std::shared_ptr<std::string> status;
     };
     
     class LoRaSystem : public System
@@ -61,13 +61,16 @@ namespace RaveBuddy
         // RTOS queue to store packets to send on next tick
         xQueueHandle m_sendQueue;
         // RTOS queue to store recieved packets that should be proccessed on state request
-        xQueueHandle m_recvQueue = xQueueCreate(SYSTEM_LORA_RECV_QUEUE_SIZE, sizeof(struct LoRaPacket));
+        xQueueHandle m_recvQueue;
 
         // Current system ID 
         uint8_t m_sysId;
 
-        // Buffer object when reading packets
+        // Buffer object when sending packets
         LoRaPacket m_sendBuffer;
+
+        // Buffer object when reading packets;
+        LoRaPacket m_recvBuffer;
         
         //Mutex to control access to LoRa
         const SemaphoreHandle_t m_loraMutex = xSemaphoreCreateMutex();

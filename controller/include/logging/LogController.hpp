@@ -11,44 +11,44 @@
     any new loggers may display the entire log tree
 */
 
-
-
 // --- SYSTEM INCLUDES --- //
 #include <vector>
 #include <string>
 #include <memory>
+#include <sstream>
+#include <cstdio>
+
+#include <iostream>
 // --- LOCAL INCLUDES --- //
 
 // --- PREPROC DEFINES --- //
 // How many messages to store before remoiving
 #define LOGGER_MAX_HISTORY 256
-
+#define TO_STRING(data) std::string(String(data).c_str())
 namespace RaveBuddy
 {
-    //TODO: Move to own header.
+    // TODO: Move to own header.
     class Logger
     {
     public:
-
         // --- CLASS FUNCTIONS --- //
         // Send a message to the logger (overriden)
-        virtual void onMessage(std::shared_ptr<std::string> t_msg) = 0 ;
+        virtual void onMessage(std::shared_ptr<std::string> t_msg) = 0;
     };
-//--------------------------------
+    //--------------------------------
     class LogController
     {
     private:
         // --- PRIVATE DATA --- //
-        
+
         // Store all log messages (within limit)
         static std::vector<std::shared_ptr<std::string>> m_history;
         // All Registered logging components
         static std::vector<Logger *> m_loggers;
 
     public:
-
         // --- OPERATORS --- //
-        
+
         LogController();
 
         // --- CLASS FUNCTIOSN --- //
@@ -60,6 +60,15 @@ namespace RaveBuddy
 
         // Log a message to all the registered loggers (and store it in a queue)
         static void logMessage(std::string t_msg);
+
+
+        template <typename ValueType>
+        static std::string stringulate(ValueType v)
+        {
+            std::ostringstream oss;
+            oss << v;
+            return oss.str();
+        }
     };
 
 } // namespace RaveBuddy

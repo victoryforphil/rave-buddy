@@ -30,7 +30,7 @@ void setup()
     // * TEST CODE * //
     RaveBuddy::LogController::logMessage("Main: Starting...");
     //RaveBuddy::SerialSystem serial(9600);
-    RaveBuddy::Unit unit(7);
+    RaveBuddy::Unit unit(random(200));
     for(;;){
 
     }
