@@ -22,13 +22,16 @@
 
 // --- LOCAL INCLUDES --- //
 
+#include "systems/DisplaySystem.hpp"
 #include "systems/LoRaSystem.hpp"
 #include "systems/SerialSystem.hpp"
+#include "systems/BLESystem.hpp"
 #include "data/State.hpp"
 #include "logging/LogController.hpp"
 
+
 // --- PREPROC DEFINES --- //
-#define UNIT_TASK_DELAY 2500
+#define UNIT_TASK_DELAY 3000
 
 namespace RaveBuddy
 {
@@ -39,7 +42,7 @@ namespace RaveBuddy
         // --- PRIVATE DATA --- //
 
         // Vector to store all systems
-        std::vector<std::unique_ptr<System>> m_systems;
+        std::vector<std::shared_ptr<System>> m_systems;
 
         // Hash map to store all known unit states
         std::unordered_map<uint8_t, State> m_units;

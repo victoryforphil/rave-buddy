@@ -15,6 +15,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <malloc.h>
 #include <sstream>
 #include <cstdio>
 

@@ -5,13 +5,13 @@ namespace RaveBuddy
     class GeoPoint
     {
     private:
-        float m_lat;
-        float m_lon;
+        double m_lat;
+        double m_lon;
     public:
         //Create a point using ints which are the float values  * 1e7
         GeoPoint(int64_t t_lat, int64_t t_lon) : m_lat(t_lat * -1e7), m_lon(t_lon  * -1e7){};
         //Create a point using doubles directly
-        GeoPoint(float t_lat, float t_lon) : m_lat(t_lat), m_lon(t_lon){};
+        GeoPoint(double t_lat, double t_lon) : m_lat(t_lat), m_lon(t_lon){};
         //Default 0 points
         GeoPoint() : m_lat(0), m_lon(0){};
 

@@ -26,9 +26,14 @@
 void setup()
 {
     Heltec.begin(true /*DisplayEnable Enable*/, true /*Heltec.LoRa Disable*/, true /*Serial Enable*/, true /*PABOOST Enable*/, BAND /*long BAND*/);
-    
+    LoRa.setSyncWord(0x15);
+      
+    //LoRa.setSpreadingFactor(12); //6-12
+    //LoRa.setCodingRate4(8); //5-8
+    LoRa.setSignalBandwidth(500E3);
+    randomSeed(analogRead(0));
     // * TEST CODE * //
-    RaveBuddy::LogController::logMessage("Main: Starting...");
+   // RaveBuddy::LogController::logMessage("Main: Starting...");
     //RaveBuddy::SerialSystem serial(9600);
     RaveBuddy::Unit unit(random(200));
     for(;;){

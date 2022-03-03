@@ -25,11 +25,12 @@
 #include "logging/LogController.hpp"
 
 // --- PREPROC DEFINES --- //
-#define SYSTEM_LORA_RECV_QUEUE_SIZE 16
-#define SYSTEM_LORA_SEND_QUEUE_SIZE 16
+#define SYSTEM_LORA_RECV_QUEUE_SIZE 4
+#define SYSTEM_LORA_SEND_QUEUE_SIZE 4
 #define SYSTEM_LORA_STACK_SIZE 4096
-#define SYSTEM_LORA_RECV_DELAY 25
-#define SYSTEM_LORA_SEND_DELAY 200
+#define SYSTEM_LORA_RECV_DELAY 100
+#define SYSTEM_LORA_SEND_DELAY 500
+#define SYSTEM_LORA_MAGIC 0x77
 
 namespace RaveBuddy
 {   
@@ -46,8 +47,7 @@ namespace RaveBuddy
         uint64_t timestamp;
         int64_t gps_lat; // Shifted by E7
         int64_t gps_lon; // Shifted by E7
-        uint8_t status_len;
-        std::shared_ptr<std::string> status;
+        char status[32];
     };
     
     class LoRaSystem : public System
@@ -99,11 +99,11 @@ namespace RaveBuddy
         // --- SYSTEM OVERRIDES --- //
 
         // Empty single request
-        virtual bool requestUpdate(State &t_state){return true;};
+        bool requestUpdate(State &t_state){return true;};
         // Request state updates. Will parse all recieved packets and update the state
-        virtual bool requestUpdateAll(std::unordered_map<uint8_t, State> &t_state);
+        bool requestUpdateAll(std::unordered_map<uint8_t, State> &t_state);
         // Send current state out across the LoRa Network
-        virtual bool responseUpdate(State &t_state);
+        bool responseUpdate(State &t_state);
 
         
     };
