@@ -54,7 +54,7 @@ void SerialSystem::send(std::shared_ptr<std::string> t_msg)
 
     Serial.println(t_msg->c_str());
     // Add the msg to the queue to be sent off.
-    xQueueSend(m_messageQueue, &t_msg, portMAX_DELAY);
+    //xQueueSend(m_messageQueue, &t_msg, portMAX_DELAY);
 }
 
 SerialSystem::~SerialSystem()

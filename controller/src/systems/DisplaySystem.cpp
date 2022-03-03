@@ -49,8 +49,9 @@ void DisplaySystem::drawDeviceList(std::vector<State> t_states)
 void DisplaySystem::drawDeviceInfo(State t_state)
 {
     Heltec.display->setFont(ArialMT_Plain_24);
-    Heltec.display->drawString(40, 20, String(t_state.getId()));
+    Heltec.display->drawString(50, 10, String(t_state.getId()));
     Heltec.display->setFont(ArialMT_Plain_10);
+    Heltec.display->drawString(45, 35, String(t_state.getLocation().getLat()) + "," +  String(t_state.getLocation().getLon()));
     Heltec.display->drawString(0, 50, m_logmsg);
     
 }

@@ -29,7 +29,7 @@
 #define SYSTEM_LORA_SEND_QUEUE_SIZE 4
 #define SYSTEM_LORA_STACK_SIZE 4096
 #define SYSTEM_LORA_RECV_DELAY 100
-#define SYSTEM_LORA_SEND_DELAY 500
+#define SYSTEM_LORA_SEND_DELAY 1000
 #define SYSTEM_LORA_MAGIC 0x77
 
 namespace RaveBuddy
@@ -45,9 +45,9 @@ namespace RaveBuddy
     struct LoRaPacket{
         uint8_t id;
         uint64_t timestamp;
-        int64_t gps_lat; // Shifted by E7
-        int64_t gps_lon; // Shifted by E7
-        char status[32];
+        double gps_lat; // Shifted by E7
+        double gps_lon; // Shifted by E7
+        char status[16];
     };
     
     class LoRaSystem : public System

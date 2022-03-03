@@ -6,8 +6,8 @@ LoRaSystem::LoRaSystem()
 {
     
     LogController::logMessage("LORA: Starting Recv/Send RTOS Tasks");
-    xTaskCreatePinnedToCore(this->initRecvTask, "LORA/Recv", 2048 * 4, this, 5, NULL, 0);
-    xTaskCreatePinnedToCore(this->initSendTask, "LORA/Send", 2048 * 4, this, 4, NULL, 0);
+    xTaskCreatePinnedToCore(this->initRecvTask, "LORA/Recv", 2048 * 4, this, 5, NULL, 1);
+    xTaskCreatePinnedToCore(this->initSendTask, "LORA/Send", 2048 * 4, this, 4, NULL, 1);
 }
 
 void LoRaSystem::initSendTask(void *t_this)
@@ -56,7 +56,7 @@ void LoRaSystem::tickSendTask()
 
     // TODO: Look into making this a while loop so it can send all the queued packets at once?
      LoRaPacket buffer;
-    if (xQueueReceive(m_sendQueue, &buffer, portMAX_DELAY / portTICK_PERIOD_MS) == pdTRUE)
+    if (xQueueReceive(m_sendQueue, &buffer, 100 / portTICK_PERIOD_MS) == pdTRUE)
     {
         //LogController::logMessage("LORA: Startng to send...");
         if (xSemaphoreTake(m_loraMutex, 500 / portTICK_PERIOD_MS) != pdTRUE)
@@ -73,7 +73,7 @@ void LoRaSystem::tickSendTask()
         //uint8_t magicNum = SYSTEM_LORA_MAGIC;
         //LoRa.write((const uint8_t *)&magicNum, sizeof(uint8_t));
 
-        LoRa.write((const uint8_t *)&buffer, sizeof(3));
+        LoRa.write((const uint8_t *)&buffer, sizeof(LoRaPacket));
         LoRa.endPacket();
         LogController::logMessage("LORA: Sent State");
         xSemaphoreGive(m_loraMutex);
@@ -85,7 +85,7 @@ void LoRaSystem::tickSendTask()
 void LoRaSystem::tickRecvTask()
 {
     
-    if (xSemaphoreTake(m_loraMutex, 250 / portTICK_PERIOD_MS) != pdTRUE)
+    if (xSemaphoreTake(m_loraMutex, 1000 / portTICK_PERIOD_MS) != pdTRUE)
     {
         LogController::logMessage("LORA: Failed to aquired LoRa Mutex!");
         return;
@@ -114,7 +114,8 @@ bool LoRaSystem::requestUpdateAll(std::unordered_map<uint8_t, State> &t_state)
     {
        // auto statusPtr = buffer.status;
         t_state[buffer.id].setUintId(buffer.id);
-        t_state[buffer.id].setLocation(34.0904538621197, -117.29315916640135);
+        t_state[buffer.id].setLocation(buffer.gps_lat, buffer.gps_lon);
+       // t_state[buffer.id].setLocation(34.0904538621197, -117.29315916640135);
        // t_state[buffer.id].setStatus(*statusPtr.get());
 
     }
@@ -127,8 +128,8 @@ bool LoRaSystem::responseUpdate(State &t_state)
     //LogController::logMessage("LORA/Response: Submiting new state.");
     LoRaPacket newPacket;
     newPacket.id = t_state.getId();
-    newPacket.gps_lat = t_state.getLocation().getLatInt();
-    newPacket.gps_lon = t_state.getLocation().getLonInt();
+    newPacket.gps_lat = t_state.getLocation().getLat();
+    newPacket.gps_lon = t_state.getLocation().getLon();
 
     strcpy(newPacket.status, t_state.getStatus().c_str());
 

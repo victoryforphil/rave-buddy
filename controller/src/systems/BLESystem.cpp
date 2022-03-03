@@ -13,10 +13,9 @@ void BLESystem::initTask(void *t_this){
     
     LogController::logMessage("BLE: Task Started");
     BLESystem* self = (BLESystem*)t_this;
-;
     self->bleStart();
 
-    self->m_stateQueue = xQueueCreate(8, sizeof(State));
+    self->m_stateQueue = xQueueCreate(32, sizeof(State));
     if (!self->m_stateQueue)
     {
         LogController::logMessage("!!!BLE: Queue fail");

@@ -22,7 +22,7 @@
 
 // --- PREPROC DEFINES --- //
 
-#define SYSTEM_DISPLAY_TASK_DELAY 250
+#define SYSTEM_DISPLAY_TASK_DELAY 500
 
 namespace RaveBuddy
 {

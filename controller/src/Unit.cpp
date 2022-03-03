@@ -10,11 +10,12 @@ Unit::Unit(uint8_t t_id) : m_id(t_id)
     m_units[m_id].setUintId(m_id, true);
     
     LogController::logMessage("Unit: Creating system with ID: " + TO_STRING(m_id));
+     m_systems.push_back(std::move(std::make_shared<GPSSystem>()));
     m_systems.push_back(std::move(std::make_shared<SerialSystem>(9600)));
-    m_systems.push_back(std::move(std::make_unique<LoRaSystem>()));
+    
     m_systems.push_back(std::move(std::make_unique<DisplaySystem>()));
     m_systems.push_back(std::move(std::make_shared<BLESystem>()));
-
+    m_systems.push_back(std::move(std::make_unique<LoRaSystem>()));
     LogController::logMessage("Unit: Init RTOS Task");
   
     xTaskCreatePinnedToCore(this->initTask, "Unit/Task", 2048 * 2, this, 2, NULL, 1);

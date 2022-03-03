@@ -26,6 +26,7 @@
 #include "systems/LoRaSystem.hpp"
 #include "systems/SerialSystem.hpp"
 #include "systems/BLESystem.hpp"
+#include "systems/GPSSystem.hpp"
 #include "data/State.hpp"
 #include "logging/LogController.hpp"
 

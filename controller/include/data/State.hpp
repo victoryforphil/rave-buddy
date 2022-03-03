@@ -17,7 +17,7 @@ namespace RaveBuddy
         uint8_t m_sats;
         uint8_t m_currentLed;
         uint64_t m_timestamp;
-        std::string m_status = "Default Status";
+        std::string m_status = "Default";
         
 
     public:
