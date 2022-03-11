@@ -6,14 +6,24 @@ PODS:
   - flutter_blue/Protos (0.0.1):
     - Flutter
     - Protobuf (~> 3.11.4)
+  - google_maps_flutter (0.0.1):
+    - Flutter
+    - GoogleMaps
+  - GoogleMaps (5.2.0):
+    - GoogleMaps/Maps (= 5.2.0)
+  - GoogleMaps/Base (5.2.0)
+  - GoogleMaps/Maps (5.2.0):
+    - GoogleMaps/Base
   - Protobuf (3.11.4)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_blue (from `.symlinks/plugins/flutter_blue/ios`)
+  - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
 
 SPEC REPOS:
   trunk:
+    - GoogleMaps
     - Protobuf
 
 EXTERNAL SOURCES:
@@ -21,10 +31,14 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_blue:
     :path: ".symlinks/plugins/flutter_blue/ios"
+  google_maps_flutter:
+    :path: ".symlinks/plugins/google_maps_flutter/ios"
 
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_blue: eeb381dc4727a0954dede73515f683865494b370
+  google_maps_flutter: fe98b02bbb6717c7297c7747b84c4ead2bc5fc3b
+  GoogleMaps: 025272d5876d3b32604e5c080dc25eaf68764693
   Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
 
 PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d

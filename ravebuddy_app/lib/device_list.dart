@@ -74,8 +74,10 @@ class DeviceItem extends StatefulWidget {
 class _DeviceItemState extends State<DeviceItem> {
   @override
   Widget build(BuildContext context) {
+    BluetoothDevice device = widget.scanResult.device;
     return GestureDetector(
-      onTap: () => {
+      onTap: () async => {
+        await device.connect(timeout: Duration(seconds: 5)),
         Navigator.push(
             context,
             MaterialPageRoute(
