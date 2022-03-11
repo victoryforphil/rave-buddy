@@ -1,95 +1,97 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:ravebuddy_app/device_view.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:ravebuddy_app/models/RaveUnit.dart';
 
 class PageDeviceList extends StatelessWidget {
   const PageDeviceList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var units = context.watch<RaveUnits>();
+    List<RaveUnitState> devices = units.devices;
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text("Connect to Rave Buddy"),
-      ),
-      body: DeviceList(),
-      floatingActionButton: StreamBuilder<bool>(
-        stream: FlutterBlue.instance.isScanning,
-        initialData: false,
-        builder: (c, snapshot) {
-          if (snapshot.data!) {
-            return FloatingActionButton(
-              child: Icon(Icons.stop),
-              onPressed: () => FlutterBlue.instance.stopScan(),
-              backgroundColor: Colors.red,
-            );
-          } else {
-            return FloatingActionButton(
-                child: Icon(Icons.search),
-                onPressed: () => FlutterBlue.instance
-                    .startScan(timeout: Duration(seconds: 4)));
-          }
-        },
-      ),
-    );
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text("Connect to Rave Buddy"),
+        ),
+        body: Column(
+          children: (devices.length > 0
+              ? devices.map((device) {
+                  return buildItme(device);
+                }).toList()
+              : [
+                  Column(
+                    children: [
+                      CircularProgressIndicator(),
+                      Text(
+                        "Searching for nearby Rave Buddies...",
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                  )
+                ]),
+        ));
   }
 }
 
-class DeviceList extends StatelessWidget {
-  const DeviceList({Key? key}) : super(key: key);
+Widget buildItme(RaveUnitState device) {
+  const LatLng loc = const LatLng(45.521563, -122.677433);
+  return Card(
+    child: Column(
+      children: [
+        ListTile(
+          title: Text("RaveBuddy #${device.id.toString()}"),
+          trailing: Text((device.rssi + 100).toString()),
+          subtitle: Text(
+              "Timestamp: ${((device.timestamp / 10000) - 800).toString()}, Sats: ${device.gpsSats.toString()}"),
+        ),
+        Expanded(child: MapSample(location: loc)),
+      ],
+    ),
+  );
+}
+
+class MapSample extends StatefulWidget {
+  final LatLng location;
+
+  const MapSample({Key? key, required this.location}) : super(key: key);
+
+  @override
+  State<MapSample> createState() => MapSampleState();
+}
+
+class MapSampleState extends State<MapSample> {
+  Completer<GoogleMapController> _controller = Completer();
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () =>
-          FlutterBlue.instance.startScan(timeout: Duration(seconds: 3)),
-      child: ListView(
-        physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics()),
-        children: <Widget>[
-          StreamBuilder<List<ScanResult>>(
-            stream: FlutterBlue.instance.scanResults,
-            initialData: [],
-            builder: (context, snapshot) => Column(
-                children: snapshot.data!
-                    .where((d) => d.device.name.contains("RaveBuddy"))
-                    .map((d) => DeviceItem(scanResult: d))
-                    .toList()),
-          ),
-        ],
-      ),
-    );
-  }
-}
+    final loc = widget.location;
 
-class DeviceItem extends StatefulWidget {
-  final ScanResult scanResult;
-  const DeviceItem({Key? key, required this.scanResult}) : super(key: key);
-
-  @override
-  _DeviceItemState createState() => _DeviceItemState();
-}
-
-class _DeviceItemState extends State<DeviceItem> {
-  @override
-  Widget build(BuildContext context) {
-    BluetoothDevice device = widget.scanResult.device;
-    return GestureDetector(
-      onTap: () async => {
-        await device.connect(timeout: Duration(seconds: 5)),
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    PageDeviceView(device: widget.scanResult.device)))
+    if (_controller.isCompleted) {
+      _controller.future.then((value) async => value.animateCamera(
+          CameraUpdate.newCameraPosition(
+              CameraPosition(target: loc, zoom: await value.getZoomLevel()))));
+    }
+    final pos = CameraPosition(target: loc, zoom: 18.0, tilt: 50.0);
+    return Scaffold(
+        body: GoogleMap(
+      mapType: MapType.hybrid,
+      initialCameraPosition: pos,
+      onMapCreated: (GoogleMapController controller) {
+        _controller.complete(controller);
+        //s controller.moveCamera(CameraUpdate.newLatLng(loc));
       },
-      child: Card(
-          child: ListTile(
-        leading: Icon(Icons.add_link_sharp),
-        title: Text(widget.scanResult.device.name),
-        subtitle: Text(widget.scanResult.rssi.toString()),
-      )),
-    );
+      markers: {
+        Marker(
+          markerId: MarkerId("1"),
+          position: loc,
+        )
+      },
+    ));
   }
 }
