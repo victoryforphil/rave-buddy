@@ -2,11 +2,11 @@
 
 using namespace RaveBuddy;
 
-BLESystem::BLESystem(){
+BLESystem::BLESystem(uint8_t t_id) : m_id(t_id){
     
     LogController::logMessage("BLE: Starting");
     
-    xTaskCreatePinnedToCore(this->initTask, "System/Lora/Recv", 2048 * 6, this, 8, NULL, 0);
+    xTaskCreatePinnedToCore(this->initTask, "BLE", 2048 * 6, this, 7, NULL, 1);
 }
 
 void BLESystem::initTask(void *t_this){
@@ -65,7 +65,7 @@ void BLESystem::bleStart()
         return;
     }
     LogController::logMessage("BLE: Creating BLE Server");
-    BLEDevice::init("RaveBuddy");
+    BLEDevice::init("RaveBuddy #" + TO_STRING(m_id));
 
     while(!BLEDevice::getInitialized()){
         vTaskDelay(10 / portTICK_PERIOD_MS);
@@ -89,11 +89,12 @@ void BLESystem::bleStart()
 
 void BLESystem::bleNew(State &t_state)
 {
-
+    BLEDevice::stopAdvertising();
     LogController::logMessage("BLE: DeviceCreate: " + TO_STRING(t_state.getId()));
 
     BLEUnit newUnit = {0};
-    newUnit.service = m_server->createService(uuid_get());
+    std::string serviceUUID = uuid_get();
+    newUnit.service = m_server->createService(serviceUUID);
 
     newUnit.characteristics["ID"] = newUnit.service->createCharacteristic(
         uuid_get(),
@@ -125,8 +126,8 @@ void BLESystem::bleNew(State &t_state)
         BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE
     );
     newUnit.service->start();
-    m_advertising->addServiceUUID(uuid_get());
-
+    m_advertising->addServiceUUID(serviceUUID);
+    
     m_units[t_state.getId()] = newUnit;
     LogController::logMessage("BLE: Device Started: " + TO_STRING(t_state.getId()));
 }
@@ -140,18 +141,30 @@ void BLESystem::bleUpdate(State &t_state){
      LogController::logMessage("BLE: Update: " + TO_STRING(t_state.getId()));
 
     unit.characteristics["ID"]->setValue("ID=" + TO_STRING( t_state.getId()));
-    unit.characteristics["NAME"]->setValue("NAME=" +TO_STRING( t_state.getId()));
+    unit.characteristics["ID"]->notify();
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+
+    unit.characteristics["NAME"]->setValue("NAME=" +t_state.getName());
+    unit.characteristics["NAME"]->notify();
+    vTaskDelay(100 / portTICK_PERIOD_MS);
     unit.characteristics["GPS_LOC"]->setValue(
         "GPS_LOC=" + 
         TO_STRING(t_state.getLocation().getLat()) +
         ","+ 
         TO_STRING(t_state.getLocation().getLon())
     );
-    unit.characteristics["GPS_SATS"]->setValue("GPS_SATS=" +TO_STRING( "1"));
+    unit.characteristics["GPS_LOC"]->notify();
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    unit.characteristics["GPS_SATS"]->setValue("GPS_SATS=" +TO_STRING(t_state.getSats()));
+     unit.characteristics["GPS_SATS"]->notify();
+     vTaskDelay(100 / portTICK_PERIOD_MS);
     unit.characteristics["STATUS"]->setValue("STATUS=" + t_state.getStatus());
-    unit.characteristics["TIMESTAMP"]->setValue("TIMESTAMP=" +TO_STRING( 000000));
-
-}
+    unit.characteristics["TIMESTAMP"]->setValue("TIMESTAMP=" +TO_STRING(t_state.getTimestamp()));
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    unit.characteristics["TIMESTAMP"]->notify();
+    //BLEDevice::startAdvertising();
+   
+}   
 
 bool BLESystem::requestUpdateAll(std::unordered_map<uint8_t, State> &t_state)
 {

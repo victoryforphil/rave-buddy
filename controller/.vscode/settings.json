@@ -44,7 +44,8 @@
     "ratio": "cpp",
     "string_view": "cpp",
     "string": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "random": "cpp"
   },
   "C_Cpp_Runner.cCompilerPath": "C:/Users/Victo/.platformio/packages/toolchain-xtensa32/bin/xtensa-esp32-elf-gcc.exe",
   "C_Cpp_Runner.cppCompilerPath": "C:/msys64/mingw64/bin/g++.exe",

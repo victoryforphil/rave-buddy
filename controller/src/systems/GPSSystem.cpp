@@ -51,6 +51,10 @@ void GPSSystem::tickTask()
                 packet.lon = m_gps.location.lng();
                
             }
+
+            if(m_gps.time.isValid()){
+                packet.timestamp = m_gps.time.value();
+            }
             xQueueReset(m_recvQueue);
             xQueueSendToFront(m_recvQueue, &packet, 100 / portTICK_PERIOD_MS);
         }
@@ -70,7 +74,8 @@ bool GPSSystem::requestUpdate(State &t_state)
         LogController::logMessage("GPS: SAT " + TO_STRING(buffer.sats));
         LogController::logMessage("GPS: Loc " + TO_STRING(buffer.lat));
        t_state.setLocation(buffer.lat, buffer.lon);
-        
+        t_state.setSats(buffer.sats);
+        t_state.setTimestamp(buffer.timestamp);
     }
     
 

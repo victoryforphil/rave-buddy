@@ -6,7 +6,7 @@ DisplaySystem::DisplaySystem()
 {
     LogController::registerLogger(this);
     LogController::logMessage("DSP: Starting RTOS Task.");
-    xTaskCreatePinnedToCore(this->initTask, "DSP", 2048 * 3, this, 9, NULL, 1);
+    xTaskCreatePinnedToCore(this->initTask, "DSP", 2048 * 3, this, 5, NULL, 1);
 }
 
 void DisplaySystem::initTask(void *t_this)
@@ -49,10 +49,12 @@ void DisplaySystem::drawDeviceList(std::vector<State> t_states)
 void DisplaySystem::drawDeviceInfo(State t_state)
 {
     Heltec.display->setFont(ArialMT_Plain_24);
-    Heltec.display->drawString(50, 10, String(t_state.getId()));
+    Heltec.display->drawString(45, 0, String(t_state.getId()));
     Heltec.display->setFont(ArialMT_Plain_10);
+     Heltec.display->drawString(45, 25, "GPS Sats: " + String(t_state.getSats()));
     Heltec.display->drawString(45, 35, String(t_state.getLocation().getLat()) + "," +  String(t_state.getLocation().getLon()));
-    Heltec.display->drawString(0, 50, m_logmsg);
+    Heltec.display->drawString(45, 45, "Time: " + String((unsigned int)t_state.getTimestamp()));
+    //Heltec.display->drawString(0, 50, m_logmsg);
     
 }
 

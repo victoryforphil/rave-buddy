@@ -11,6 +11,7 @@
 
 // --- Local Includes --- //
 #include "systems/SerialSystem.hpp"
+#include "systems/LoRaSystem.hpp"
 #include "logging/LogController.hpp"
 #include "Unit.hpp"
 
@@ -21,16 +22,18 @@
 #define ARDUINO_RUNNING_CORE 1
 #endif
 
-#define BAND 433E6
+#define BAND 915E6
 
 void setup()
 {
     Heltec.begin(true /*DisplayEnable Enable*/, true /*Heltec.LoRa Disable*/, true /*Serial Enable*/, true /*PABOOST Enable*/, BAND /*long BAND*/);
     //LoRa.setSyncWord(0x15);
-     Serial2.begin(9600, SERIAL_8N1, 23, 22);
+    Serial2.begin(9600, SERIAL_8N1, 23, 22);
+    //LoRa.setTxPower(20, PA_OUTPUT_PA_BOOST_PIN);
     LoRa.setSpreadingFactor(10); //6-12
-    LoRa.setCodingRate4(7); //5-8
-    LoRa.setSignalBandwidth(250E3);
+    //LoRa.setCodingRate4(5); //5-8
+    //LoRa.enableCrc();
+    LoRa.setSignalBandwidth(125E3);
     randomSeed(analogRead(0));
     // * TEST CODE * //
    // RaveBuddy::LogController::logMessage("Main: Starting...");

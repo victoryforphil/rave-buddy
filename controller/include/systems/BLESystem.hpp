@@ -45,6 +45,9 @@ namespace RaveBuddy
         //Hashmap to store BLE units
         std::unordered_map<uint8_t, BLEUnit> m_units;
         
+        // ID of unit 
+        uint8_t m_id;
+
         State buffer;
 
         BLEAdvertising* m_advertising;
@@ -72,7 +75,7 @@ namespace RaveBuddy
         void bleStart();
 
     public:
-        BLESystem(/* args */);
+        BLESystem(uint8_t t_id);
         ~BLESystem() = default;
 
         // --- SYSTEM OVERRIDES --- ///

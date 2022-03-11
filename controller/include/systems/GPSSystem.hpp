@@ -39,6 +39,7 @@ namespace RaveBuddy
         double lat;
         double lon;
         int sats;
+        uint32_t timestamp;
     };
     
     class GPSSystem : public System

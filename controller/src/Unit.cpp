@@ -10,11 +10,11 @@ Unit::Unit(uint8_t t_id) : m_id(t_id)
     m_units[m_id].setUintId(m_id, true);
     
     LogController::logMessage("Unit: Creating system with ID: " + TO_STRING(m_id));
-     m_systems.push_back(std::move(std::make_shared<GPSSystem>()));
+    m_systems.push_back(std::move(std::make_shared<GPSSystem>()));
     m_systems.push_back(std::move(std::make_shared<SerialSystem>(9600)));
     
     m_systems.push_back(std::move(std::make_unique<DisplaySystem>()));
-    m_systems.push_back(std::move(std::make_shared<BLESystem>()));
+    m_systems.push_back(std::move(std::make_shared<BLESystem>(m_id)));
     m_systems.push_back(std::move(std::make_unique<LoRaSystem>()));
     LogController::logMessage("Unit: Init RTOS Task");
   
@@ -29,9 +29,11 @@ void Unit::initTask(void *t_this)
     LogController::logMessage("Unit: Task started");
     for (;;)
     {
+      
         vTaskDelay(UNIT_TASK_DELAY / portTICK_PERIOD_MS);
+         ((Unit *)t_this)->tickTask();
         // Call tickSendTask at every interval defined by SYSTEM_LORA_SEND_DELAY
-        ((Unit *)t_this)->tickTask();
+        
     }
 }
 
@@ -47,10 +49,19 @@ void Unit::tickTask()
     std::string logMsg = "Unit: CUR: " ;
     for (auto &x : m_units)
     {
-        
         logMsg += TO_STRING(x.first) + " ";
+
+        if(x.second.isTimedout()){
+            m_units.erase(x.first);
+        }else{
+             x.second.timeoutStrike();
+        }
+       
+      
     }
     LogController::logMessage(logMsg);
+
+    
 }
 
 Unit::~Unit()

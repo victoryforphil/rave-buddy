@@ -25,11 +25,11 @@
 #include "logging/LogController.hpp"
 
 // --- PREPROC DEFINES --- //
-#define SYSTEM_LORA_RECV_QUEUE_SIZE 4
-#define SYSTEM_LORA_SEND_QUEUE_SIZE 4
+#define SYSTEM_LORA_RECV_QUEUE_SIZE 16
+#define SYSTEM_LORA_SEND_QUEUE_SIZE 16
 #define SYSTEM_LORA_STACK_SIZE 4096
-#define SYSTEM_LORA_RECV_DELAY 100
-#define SYSTEM_LORA_SEND_DELAY 1000
+#define SYSTEM_LORA_RECV_DELAY 2
+#define SYSTEM_LORA_SEND_DELAY 7000
 #define SYSTEM_LORA_MAGIC 0x77
 
 namespace RaveBuddy
@@ -43,11 +43,12 @@ namespace RaveBuddy
     */
 
     struct LoRaPacket{
-        uint8_t id;
-        uint64_t timestamp;
+       
         double gps_lat; // Shifted by E7
         double gps_lon; // Shifted by E7
-        char status[16];
+        uint32_t timestamp;
+        uint8_t id;
+        char status[1];
     };
     
     class LoRaSystem : public System
@@ -57,6 +58,10 @@ namespace RaveBuddy
         
 
         // --- PRIVATE DATA --- //
+
+        //Singleton instance
+
+        static LoRaSystem* m_inst;
 
         // RTOS queue to store packets to send on next tick
         xQueueHandle m_sendQueue;
@@ -68,7 +73,7 @@ namespace RaveBuddy
 
         // Buffer object when sending packets
         LoRaPacket m_sendBuffer;
-
+        bool m_sendPending = false;
         // Buffer object when reading packets;
         LoRaPacket m_recvBuffer;
         
@@ -85,6 +90,8 @@ namespace RaveBuddy
         void tickSendTask();
         // Recv RTOS Task tick
         void tickRecvTask();
+
+        
 
 
     public:
@@ -104,7 +111,9 @@ namespace RaveBuddy
         bool requestUpdateAll(std::unordered_map<uint8_t, State> &t_state);
         // Send current state out across the LoRa Network
         bool responseUpdate(State &t_state);
+       // static void loraRecieve(int t_size);
 
+        static LoRaSystem* getInstance();
         
     };
     

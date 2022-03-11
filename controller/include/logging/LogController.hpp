@@ -25,7 +25,7 @@
 // --- PREPROC DEFINES --- //
 // How many messages to store before remoiving
 #define LOGGER_MAX_HISTORY 256
-#define TO_STRING(data) std::string(String(data).c_str())
+#define TO_STRING(data) std::string(String(data,6).c_str())
 namespace RaveBuddy
 {
     // TODO: Move to own header.
