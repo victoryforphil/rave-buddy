@@ -2,6 +2,7 @@
 
 using namespace RaveBuddy;
 
+
 Unit::Unit(uint8_t t_id) : m_id(t_id)
 {
     LogController::logMessage("Unit: Creating state for this unit");
@@ -16,6 +17,7 @@ Unit::Unit(uint8_t t_id) : m_id(t_id)
     m_systems.push_back(std::move(std::make_unique<DisplaySystem>()));
     m_systems.push_back(std::move(std::make_shared<BLESystem>(m_id)));
     m_systems.push_back(std::move(std::make_unique<LoRaSystem>()));
+    m_systems.push_back(std::move(std::make_unique<LEDSystem>(12)));
     LogController::logMessage("Unit: Init RTOS Task");
   
     xTaskCreatePinnedToCore(this->initTask, "Unit/Task", 2048 * 2, this, 2, NULL, 1);
@@ -26,6 +28,8 @@ Unit::Unit(uint8_t t_id) : m_id(t_id)
 
 void Unit::initTask(void *t_this)
 {
+ 
+
     LogController::logMessage("Unit: Task started");
     for (;;)
     {
@@ -49,7 +53,7 @@ void Unit::tickTask()
     std::string logMsg = "Unit: CUR: " ;
     for (auto &x : m_units)
     {
-        logMsg += TO_STRING(x.first) + " ";
+        logMsg += TO_STRING_UNSIGNED(x.first) + " ";
 
         if(x.second.isTimedout()){
             m_units.erase(x.first);

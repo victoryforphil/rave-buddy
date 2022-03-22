@@ -53,7 +53,9 @@ void GPSSystem::tickTask()
             }
 
             if(m_gps.time.isValid()){
+                
                 packet.timestamp = m_gps.time.value();
+
             }
             xQueueReset(m_recvQueue);
             xQueueSendToFront(m_recvQueue, &packet, 100 / portTICK_PERIOD_MS);

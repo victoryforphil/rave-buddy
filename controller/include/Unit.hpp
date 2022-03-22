@@ -27,6 +27,7 @@
 #include "systems/SerialSystem.hpp"
 #include "systems/BLESystem.hpp"
 #include "systems/GPSSystem.hpp"
+#include "systems/LEDSystem.hpp"
 #include "data/State.hpp"
 #include "logging/LogController.hpp"
 

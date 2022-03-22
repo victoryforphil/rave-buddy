@@ -6,7 +6,7 @@ BLESystem::BLESystem(uint8_t t_id) : m_id(t_id){
     
     LogController::logMessage("BLE: Starting");
     
-    xTaskCreatePinnedToCore(this->initTask, "BLE", 2048 * 6, this, 7, NULL, 1);
+    xTaskCreatePinnedToCore(this->initTask, "BLE", 2048 * 6, this, 7, NULL, 0);
 }
 
 void BLESystem::initTask(void *t_this){
@@ -65,7 +65,7 @@ void BLESystem::bleStart()
         return;
     }
     LogController::logMessage("BLE: Creating BLE Server");
-    BLEDevice::init("RaveBuddy #" + TO_STRING(m_id));
+    BLEDevice::init("RaveBuddy #" + TO_STRING_UNSIGNED(m_id));
 
     while(!BLEDevice::getInitialized()){
         vTaskDelay(10 / portTICK_PERIOD_MS);
@@ -140,7 +140,7 @@ void BLESystem::bleUpdate(State &t_state){
     }
      LogController::logMessage("BLE: Update: " + TO_STRING(t_state.getId()));
 
-    unit.characteristics["ID"]->setValue("ID=" + TO_STRING( t_state.getId()));
+    unit.characteristics["ID"]->setValue("ID=" + TO_STRING_UNSIGNED( t_state.getId()));
     unit.characteristics["ID"]->notify();
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
@@ -159,10 +159,10 @@ void BLESystem::bleUpdate(State &t_state){
      unit.characteristics["GPS_SATS"]->notify();
      vTaskDelay(100 / portTICK_PERIOD_MS);
     unit.characteristics["STATUS"]->setValue("STATUS=" + t_state.getStatus());
-    unit.characteristics["TIMESTAMP"]->setValue("TIMESTAMP=" +TO_STRING(t_state.getTimestamp()));
+    unit.characteristics["TIMESTAMP"]->setValue("TIMESTAMP=" +TO_STRING_UNSIGNED(t_state.getTimestamp()));
     vTaskDelay(100 / portTICK_PERIOD_MS);
     unit.characteristics["TIMESTAMP"]->notify();
-    //BLEDevice::startAdvertising();
+    BLEDevice::startAdvertising();
    
 }   
 

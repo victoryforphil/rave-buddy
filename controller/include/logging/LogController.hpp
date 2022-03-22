@@ -26,6 +26,7 @@
 // How many messages to store before remoiving
 #define LOGGER_MAX_HISTORY 256
 #define TO_STRING(data) std::string(String(data,6).c_str())
+#define TO_STRING_UNSIGNED(data) std::string(String(int(data)).c_str())
 namespace RaveBuddy
 {
     // TODO: Move to own header.
